@@ -25,8 +25,8 @@ resource "yandex_compute_instance" "this" {
   zone                      = "ru-central1-a"
 
   resources {
-    cores  = "2"
-    memory = "4"
+    cores  = "4"
+    memory = "8"
   }
 
   boot_disk {
@@ -63,9 +63,15 @@ resource "yandex_iam_service_account_static_access_key" "this" {
 
 # Создание бакета
 resource "yandex_storage_bucket" "this" {
-  bucket     = "test-s3-bucket-b1gc82kbmlj3g63n75kn"
+  bucket     = "test-s3-bucket-${random_string.bucket_name.result}"
   access_key = yandex_iam_service_account_static_access_key.this.access_key
   secret_key = yandex_iam_service_account_static_access_key.this.secret_key
 
   depends_on = [ yandex_resourcemanager_folder_iam_member.storage_editor ]
+}
+
+resource "random_string" "bucket_name" {
+  length  = 8
+  special = false
+  upper   = false
 }
